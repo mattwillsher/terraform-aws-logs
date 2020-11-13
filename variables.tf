@@ -160,6 +160,12 @@ variable "log_prefix" {
   type        = string
 }
 
+variable "org_id" {
+  description = "AWS Organization ID for use when CloudTrail organization trail."
+  default     = ""
+  type        = string
+}
+
 variable tags {
   type        = map(string)
   default     = {}
