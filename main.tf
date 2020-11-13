@@ -41,8 +41,10 @@ locals {
   # if var.cloudtrail_logs_prefix is empty then be sure to remove // in the path
   cloudtrail_logs_path = var.cloudtrail_logs_prefix == "" ? "AWSLogs" : "${var.cloudtrail_logs_prefix}/AWSLogs"
 
+  cloudtrail_logs_path_org = var.cloudtrail_org_id == "" ? local.cloudtrail_logs_path : "${local.cloudtrail_logs_path}/${var.cloudtrail_org_id}"
+
   # finally, format the full final resources ARN list
-  cloudtrail_resources = toset(formatlist("${local.bucket_arn}/${local.cloudtrail_logs_path}/%s/*", local.cloudtrail_accounts))
+  cloudtrail_resources = toset(formatlist("${local.bucket_arn}/${local.cloudtrail_logs_path_org}/%s/*", local.cloudtrail_accounts))
 
   #
   # Cloudwatch Logs locals
