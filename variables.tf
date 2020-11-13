@@ -148,6 +148,18 @@ variable "nlb_logs_prefixes" {
   type        = list(string)
 }
 
+variable "log_s3_bucket" {
+  description = "S3 Bucket to send S3 logs to. Disables logging if omitted."
+  default     = null
+  type        = string
+}
+
+variable "log_prefix" {
+  description = "Prefix for logs going into the log_s3_bucket."
+  default     = "s3/"
+  type        = string
+}
+
 variable "org_id" {
   description = "AWS Organization ID for use when CloudTrail organization trail."
   default     = ""

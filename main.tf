@@ -368,6 +368,14 @@ resource "aws_s3_bucket" "aws_logs" {
     }
   }
 
+  dynamic "logging" {
+    for_each = var.log_s3_bucket[*]
+    content {
+      target_bucket = logging.value
+      target_prefix = var.log_prefix
+    }
+  }
+
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
