@@ -41,8 +41,11 @@ locals {
   # if var.cloudtrail_logs_prefix is empty then be sure to remove // in the path
   cloudtrail_logs_path = var.cloudtrail_logs_prefix == "" ? "AWSLogs" : "${var.cloudtrail_logs_prefix}/AWSLogs"
 
-  # finally, format the full final resources ARN list
-  cloudtrail_resources = toset(formatlist("${local.bucket_arn}/${local.cloudtrail_logs_path}/%s/*", local.cloudtrail_accounts))
+  # format the full account resources ARN list
+  cloudtrail_account_resources = toset(formatlist("${local.bucket_arn}/${local.cloudtrail_logs_path}/%s/*", local.cloudtrail_accounts))
+
+  # finally, add the organization id path if one is specified
+  cloudtrail_resources = var.cloudtrail_org_id == "" ? local.cloudtrail_account_resources : setunion(local.cloudtrail_account_resources, ["${local.bucket_arn}/${local.cloudtrail_logs_path}/${var.cloudtrail_org_id}/*"])
 
   #
   # Cloudwatch Logs locals
@@ -363,6 +366,14 @@ resource "aws_s3_bucket" "aws_logs" {
 
     expiration {
       days = var.s3_log_bucket_retention
+    }
+  }
+
+  dynamic "logging" {
+    for_each = var.logging_target_bucket[*]
+    content {
+      target_bucket = logging.value
+      target_prefix = var.logging_target_prefix
     }
   }
 
